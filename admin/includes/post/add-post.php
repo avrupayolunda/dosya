@@ -337,7 +337,15 @@ include __DIR__ . '/../../header.php';
                 <ul class="media-detail-list">
                     <li><span>Dosya:</span> <span id="mediaFileName">-</span></li>
                     <li><span>Boyut:</span> <span id="mediaFileSize">-</span></li>
+                    <li><span>Boyutlar:</span> <span id="mediaDimensions">-</span></li>
+                    <li><span>Tur:</span> <span id="mediaFileType">-</span></li>
+                    <li><span>Tarih:</span> <span id="mediaDate">-</span></li>
                 </ul>
+                <div class="form-group" style="margin-top: 12px;">
+                    <label class="form-label">Alt Metin</label>
+                    <input type="text" id="mediaAltText" class="form-control" placeholder="Gorsel aciklamasi" onchange="saveMediaAltText()">
+                </div>
+                <button type="button" class="btn btn-danger btn-sm btn-block" id="mediaDeleteBtn" onclick="deleteSelectedMedia()" style="margin-top: 8px;"><i class="fas fa-trash"></i> Gorseli Sil</button>
             </div>
         </div>
         <div class="media-library-footer">
@@ -485,7 +493,14 @@ function renderMediaGrid(images) {
         div.className = 'media-item';
         div.setAttribute('data-url', img.url);
         div.setAttribute('data-name', img.name);
-        div.innerHTML = '<img src="' + img.url + '" alt="' + img.name + '" loading="lazy"><div class="media-item-info">' + img.name + '</div>';
+        div.setAttribute('data-id', img.id || '');
+        div.setAttribute('data-size', img.size || 0);
+        div.setAttribute('data-width', img.width || '');
+        div.setAttribute('data-height', img.height || '');
+        div.setAttribute('data-alt', img.alt_text || '');
+        div.setAttribute('data-type', img.filetype || '');
+        div.setAttribute('data-date', img.date || '');
+        div.innerHTML = '<img src="' + img.url + '" alt="' + (img.alt_text || img.name) + '" loading="lazy"><div class="media-item-info">' + img.name + '</div>';
         div.addEventListener('click', function() {
             toggleMediaSelection(this);
         });
@@ -496,6 +511,8 @@ function renderMediaGrid(images) {
 function toggleMediaSelection(item) {
     var url = item.getAttribute('data-url');
     var name = item.getAttribute('data-name');
+    var id = item.getAttribute('data-id');
+    var alt = item.getAttribute('data-alt') || '';
     var index = selectedMedia.findIndex(function(m) { return m.url === url; });
 
     if (index > -1) {
@@ -506,7 +523,7 @@ function toggleMediaSelection(item) {
             selectedMedia = [];
             document.querySelectorAll('.media-item.selected').forEach(function(el) { el.classList.remove('selected'); });
         }
-        selectedMedia.push({ url: url, name: name });
+        selectedMedia.push({ url: url, name: name, id: id, alt: alt });
         item.classList.add('selected');
     }
 
@@ -515,12 +532,68 @@ function toggleMediaSelection(item) {
     var sidebar = document.getElementById('mediaSidebar');
     if (selectedMedia.length > 0) {
         var last = selectedMedia[selectedMedia.length - 1];
+        var lastItem = document.querySelector('.media-item[data-url="' + last.url + '"]');
         document.getElementById('mediaPreviewImg').src = last.url;
         document.getElementById('mediaFileName').textContent = last.name;
+        document.getElementById('mediaAltText').value = last.alt || '';
+        if (lastItem) {
+            var size = parseInt(lastItem.getAttribute('data-size') || 0);
+            document.getElementById('mediaFileSize').textContent = size > 0 ? formatFileSize(size) : '-';
+            var w = lastItem.getAttribute('data-width');
+            var h = lastItem.getAttribute('data-height');
+            document.getElementById('mediaDimensions').textContent = (w && h) ? w + ' x ' + h + ' px' : '-';
+            document.getElementById('mediaFileType').textContent = lastItem.getAttribute('data-type') || '-';
+            document.getElementById('mediaDate').textContent = lastItem.getAttribute('data-date') || '-';
+        }
         sidebar.classList.add('show');
     } else {
         sidebar.classList.remove('show');
     }
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 B';
+    var k = 1024;
+    var sizes = ['B', 'KB', 'MB', 'GB'];
+    var i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+function saveMediaAltText() {
+    if (selectedMedia.length === 0) return;
+    var last = selectedMedia[selectedMedia.length - 1];
+    var altText = document.getElementById('mediaAltText').value;
+    last.alt = altText;
+    if (last.id) {
+        var formData = new FormData();
+        formData.append('action', 'update_alt');
+        formData.append('media_id', last.id);
+        formData.append('alt_text', altText);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '<?php echo BASE_URL; ?>/admin/includes/post/upload_image');
+        xhr.send(formData);
+    }
+}
+
+function deleteSelectedMedia() {
+    if (selectedMedia.length === 0) return;
+    var last = selectedMedia[selectedMedia.length - 1];
+    if (!last.id) return;
+    if (!confirm('Bu gorseli kalici olarak silmek istiyor musunuz?')) return;
+    var formData = new FormData();
+    formData.append('action', 'delete');
+    formData.append('media_id', last.id);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '<?php echo BASE_URL; ?>/admin/includes/post/upload_image');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            selectedMedia.pop();
+            updateMediaSelection();
+            document.getElementById('mediaSidebar').classList.remove('show');
+            loadMediaLibrary();
+        }
+    };
+    xhr.send(formData);
 }
 
 function updateMediaSelection() {
@@ -534,7 +607,8 @@ function insertSelectedMedia() {
     if (mediaTarget === 'editor') {
         var html = '';
         selectedMedia.forEach(function(m) {
-            html += '<p><img src="' + m.url + '" alt="' + m.name + '" style="max-width: 100%; height: auto;" /></p>';
+            var altText = m.alt || m.name;
+            html += '<p><img src="' + m.url + '" alt="' + altText + '" style="max-width: 100%; height: auto;" /></p>';
         });
         tinymce.get('postContent').insertContent(html);
     } else if (mediaTarget === 'featured') {
