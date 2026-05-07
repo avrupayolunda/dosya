@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../../includes/database.php';
+require_once __DIR__ . '/../database.php';
 include __DIR__ . '/../../hatalar.php';
 
 if (!isset($_SESSION['user_id'])) {

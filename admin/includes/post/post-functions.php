@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../../includes/database.php';
+require_once __DIR__ . '/../database.php';
 
 function uploadFeaturedImage($file, $conn) {
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];

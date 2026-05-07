@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/hatalar.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -50,7 +50,7 @@ $user_initial = strtoupper(substr($username, 0, 1));
     <link rel="shortcut icon" type="image/png" href="<?php echo BASE_URL; ?>/admin/assets/images/icon/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/admin/assets/css/dashboard.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/admin/assets/dashboard.css">
 </head>
 <body>
 

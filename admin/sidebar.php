@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/includes/database.php';
 
 $base_url = rtrim(BASE_URL, '/');
 $admin_base_url = $base_url . '/admin';

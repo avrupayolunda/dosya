@@ -1,6 +1,6 @@
 <?php
 ob_start();
-require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/includes/database.php';
 include 'hatalar.php';
 include 'header.php';
 
