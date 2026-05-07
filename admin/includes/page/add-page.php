@@ -334,9 +334,10 @@ var selectedMedia = [];
 tinymce.init({
     selector: '#pageContent',
     height: 500,
-    menubar: 'file edit view insert format tools table',
-    plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
-    toolbar: 'undo redo | blocks | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | gallery_btn preview_btn | removeformat | code fullscreen help',
+    language: 'tr',
+    plugins: 'print preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount textpattern noneditable help charmap quickbars emoticons code',
+    toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile open_gallery media template link anchor codesample | ltr rtl | code',
+    menubar: 'file edit insert view format table tools help',
     content_style: 'body { font-family: Inter, -apple-system, sans-serif; font-size: 15px; line-height: 1.7; color: #334155; }',
     images_upload_url: '<?php echo BASE_URL; ?>/admin/includes/post/upload_image',
     automatic_uploads: true,
@@ -361,15 +362,10 @@ tinymce.init({
         });
     },
     setup: function(editor) {
-        editor.ui.registry.addButton('gallery_btn', {
+        editor.ui.registry.addButton('open_gallery', {
             icon: 'gallery',
             tooltip: 'Medya Kutuphanesi',
             onAction: function() { openMediaLibrary('editor'); }
-        });
-        editor.ui.registry.addButton('preview_btn', {
-            icon: 'preview',
-            tooltip: 'Gelismis Onizleme',
-            onAction: function() { toggleAdvancedPreview(); }
         });
     }
 });
