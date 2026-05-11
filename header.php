@@ -116,6 +116,8 @@ if (!isset($canonical_url) || empty($canonical_url)) {
         if ($path === '') $path = '/';
         $canonical_url = rtrim($base_url, '/') . $path;
     }
+} elseif (strpos($canonical_url, 'http') !== 0) {
+    $canonical_url = rtrim($base_url, '/') . '/' . ltrim($canonical_url, '/');
 }
 
 // === NOINDEX DETECTION ===

@@ -6,6 +6,12 @@ error_reporting(E_ALL);
 
 global $conn, $base_url;
 
+$seo_title = 'Blog | UMTCar';
+$seo_description = 'Lees de laatste artikelen over tweedehands auto\'s, onderhoudstips en autoadvies van UMTCar.';
+$canonical_url = '/blog';
+
+include __DIR__ . '/../../header.php';
+
 if (!$conn) {
     ob_end_clean();
     die("Veritabanı bağlantı hatası: " . mysqli_connect_error());
@@ -14,13 +20,6 @@ if (!$conn) {
 $posts_per_page = 6;
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $posts_per_page;
-
-$canonical_url = rtrim($base_url, '/') . '/blog';
-
-$seo_title = 'Blog | UMTCar';
-$seo_description = 'Lees de laatste artikelen over tweedehands auto\'s, onderhoudstips en autoadvies van UMTCar.';
-
-include __DIR__ . '/../../header.php';
 
 $total_query = "SELECT COUNT(*) as total FROM blogs";
 $total_result = mysqli_query($conn, $total_query) or die("Toplam blog sorgu hatası: " . mysqli_error($conn));
