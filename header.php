@@ -114,7 +114,7 @@ if (!isset($canonical_url) || empty($canonical_url)) {
         $path = strtolower($path);
         $path = rtrim($path, '/');
         if ($path === '') $path = '/';
-        $canonical_url = 'https://www.umtcar.be' . $path;
+        $canonical_url = rtrim($base_url, '/') . $path;
     }
 }
 

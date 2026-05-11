@@ -94,11 +94,11 @@ if (!$is_ajax) {
 
     // === CANONICAL URL FOR CARLIST ===
     if (!empty($brand_in) && !empty($type_in)) {
-        $canonical_url = 'https://www.umtcar.be/zoek/' . urlencode(slugify($brand_in)) . '/' . urlencode(slugify($type_in));
+        $canonical_url = rtrim($base_url, '/') . '/zoek/' . urlencode(slugify($brand_in)) . '/' . urlencode(slugify($type_in));
     } elseif (!empty($brand_in)) {
-        $canonical_url = 'https://www.umtcar.be/zoek/' . urlencode(slugify($brand_in));
+        $canonical_url = rtrim($base_url, '/') . '/zoek/' . urlencode(slugify($brand_in));
     } else {
-        $canonical_url = 'https://www.umtcar.be/zoek';
+        $canonical_url = rtrim($base_url, '/') . '/zoek';
     }
     
     $cache_key_to_delete = "page_" . md5($_SERVER['REQUEST_URI']);

@@ -37,7 +37,7 @@ $seo_description = !empty($car['seo_description'])
             : "Bekijk deze {$car['vehica_brand']} {$car['vehica_model']} ({$car['vehica_year']}) te koop bij UMTCar. Prijs: {$car['vehica_price']}€."
     );
 
-$canonical_url = 'https://www.umtcar.be/listing/' . urlencode($slug);
+$canonical_url = rtrim($base_url, '/') . '/listing/' . urlencode($slug);
 
 $meta_title = $seo_title;
 $meta_description = $seo_description;

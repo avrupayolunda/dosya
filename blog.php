@@ -15,7 +15,7 @@ $posts_per_page = 6;
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $posts_per_page;
 
-$canonical_url = 'https://www.umtcar.be/blog';
+$canonical_url = rtrim($base_url, '/') . '/blog';
 
 $seo_title = 'Blog | UMTCar';
 $seo_description = 'Lees de laatste artikelen over tweedehands auto\'s, onderhoudstips en autoadvies van UMTCar.';
