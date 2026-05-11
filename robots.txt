@@ -1,0 +1,14 @@
+User-agent: *
+Disallow: /panel/
+Disallow: /includes/
+Disallow: /themes/
+Disallow: /loader.php
+Disallow: /log.php
+Disallow: /cart
+Disallow: /*/cart
+Disallow: /payment-success
+Disallow: /*/payment-success
+Disallow: /create-checkout-session.php
+Disallow: /llms.txt
+
+Sitemap: https://www.idealdesign.be/sitemap.xml

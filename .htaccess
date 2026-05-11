@@ -1,0 +1,149 @@
+RewriteEngine On
+
+# 1. Non-www to www redirect
+RewriteCond %{HTTP_HOST} ^idealdesign\.be$ [NC]
+RewriteRule ^(.*)$ https://www.idealdesign.be/$1 [R=301,L]
+
+# 2a. Redirect NL home slugs BEFORE generic nl/ strip (prevents double redirect)
+RewriteRule ^nl/(home|startpagina)/?$ / [R=301,L]
+
+# 2b. Redirect /nl/ prefix to non-prefixed canonical (nl is default language)
+RewriteRule ^nl/portfolio/(.+?)/?$ /portfolio/$1 [R=301,L]
+RewriteRule ^nl/blog/(.+?)/?$ /blog/$1 [R=301,L]
+RewriteRule ^nl/blog/?$ /blog [R=301,L]
+RewriteRule ^nl/cart/?$ /cart [R=301,L]
+RewriteRule ^nl/(.+?)/?$ /$1 [R=301,L]
+RewriteRule ^nl/?$ / [R=301,L]
+
+# 3. Redirect double language prefixes: /en/en → /en, /fr/fr → /fr, etc.
+RewriteRule ^(en|fr|tr|nl)/(en|fr|tr|nl)/?$ /$1 [R=301,L]
+
+# 4. Redirect home slugs to language root
+RewriteRule ^(en|fr|tr)/(home|accueil|anasayfa|anaysayfa|startpagina)/?$ /$1 [R=301,L]
+
+# 5. Redirect root-level home slugs to /
+RewriteRule ^(home|startpagina|accueil|anasayfa|anaysayfa)/?$ / [R=301,L]
+
+# 6. Redirect old/non-existent paths to correct canonical URLs
+RewriteRule ^en/contact-2/?$ /en/contact [R=301,L]
+RewriteRule ^en/portfolio/?$ /en [R=301,L]
+RewriteRule ^fr/portfolio/?$ /fr [R=301,L]
+RewriteRule ^tr/portfolio/?$ /tr [R=301,L]
+RewriteRule ^tr/referanslarimiz/?$ /tr [R=301,L]
+RewriteRule ^en/get-an-offer/?$ /en/get-offer [R=301,L]
+
+# 7. Redirect old root-level slugs to correct language versions
+RewriteRule ^contactez/?$ /fr/contactez [R=301,L]
+RewriteRule ^compagnie/?$ /fr/compagnie [R=301,L]
+RewriteRule ^prestations-de-service/?$ /fr/prestations-de-service [R=301,L]
+RewriteRule ^obtenir-loffre/?$ /fr/obtenir-une-offre [R=301,L]
+RewriteRule ^teklif-al/?$ /tr/teklif-al [R=301,L]
+RewriteRule ^hakkimizda/?$ /tr/hakkimizda [R=301,L]
+RewriteRule ^iletisim/?$ /tr/iletisim [R=301,L]
+RewriteRule ^hizmetlerimiz/?$ /tr/hizmetlerimiz [R=301,L]
+RewriteRule ^portfolio/?$ / [R=301,L]
+RewriteRule ^nos-references-2/?$ / [R=301,L]
+RewriteRule ^nos-references/?$ / [R=301,L]
+
+# 8. Redirect old portfolio-category URLs (legacy WordPress-style)
+RewriteRule ^portfolio-category/(.*)$ / [R=301,L]
+
+# 9. Redirect old /fr/nos-references and /en/our-references
+RewriteRule ^fr/nos-references-2/?$ /fr [R=301,L]
+RewriteRule ^fr/nos-references/?$ /fr [R=301,L]
+RewriteRule ^en/our-references/?$ /en [R=301,L]
+
+# If real file or directory exists, serve it directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Remove trailing slashes (except root)
+RewriteRule ^(.+?)/$ /$1 [L,R=301]
+
+# Static file loader
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^(.+\.(css|js|jpg|jpeg|png|gif|webp|svg|woff|woff2|ttf|eot|ico))$ loader.php?file=$1 [L,QSA]
+
+# Cart routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z]{2})/cart/?$ cart.php?lang=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^cart/?$ cart.php?lang=nl [L,QSA]
+
+# Payment success routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z]{2})/payment-success/?$ payment-success.php?lang=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^payment-success/?$ payment-success.php?lang=nl [L,QSA]
+
+# Blog detail redirects (old URLs)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^blog-detail\.php$ /blog/ [R=301,L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^blog-detail/([^/]+)/?$ /blog/$1 [R=301,L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z]{2})/blog-detail/([^/]+)/?$ /$1/blog/$2 [R=301,L,QSA]
+
+# Blog detail routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z]{2})/blog/([^/]+)/?$ blog-detail.php?lang=$1&slug=$2 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^blog/([^/]+)/?$ blog-detail.php?lang=nl&slug=$1 [L,QSA]
+
+# Blog list routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z]{2})/blog/?$ blog-list.php?lang=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^blog/?$ blog-list.php?lang=nl [L,QSA]
+
+# Portfolio routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^portfolio/([a-z]{2})/(.*)$ portfolio.php?lang=$1&slug=$2 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^portfolio/(.*)$ portfolio.php?lang=nl&slug=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z]{2})/portfolio/(.*)$ portfolio.php?lang=$1&slug=$2 [L,QSA]
+
+# Sitemap route
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+# Homepage routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^$ index.php?lang=nl&slug=home [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z]{2})/?$ index.php?lang=$1&slug=home [L,QSA]
+
+# Page routes (catch-all)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z]{2})/(.*)$ page.php?lang=$1&slug=$2 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ page.php?lang=nl&slug=$1 [L,QSA]
